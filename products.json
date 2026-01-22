@@ -1,0 +1,230 @@
+{
+  "company": "Lira Cosmetics Ltd.",
+  "brands": [
+    {
+      "brand_name": "Lira Beauty",
+      "products": [
+        {
+          "id": "LB01",
+          "name": "Hydra Glow Face Cream",
+          "category": "Skincare",
+          "features": "Provides deep hydration and enhances natural glow.",
+          "usage_instructions": "Apply a small amount to clean face twice daily.",
+          "ingredients": ["Hyaluronic Acid", "Vitamin E", "Aloe Vera"],
+          "price_bdt": 850,
+          "suitability": "Suitable for dry and normal skin types."
+        },
+        {
+          "id": "LB02",
+          "name": "Vitamin C Brightening Serum",
+          "category": "Skincare",
+          "features": "Brightens skin tone and reduces dullness.",
+          "usage_instructions": "Apply 2–3 drops on face before moisturizer.",
+          "ingredients": ["Vitamin C", "Niacinamide", "Glycerin"],
+          "price_bdt": 1200,
+          "suitability": "Suitable for all skin types."
+        },
+        {
+          "id": "LB03",
+          "name": "Gentle Foaming Face Wash",
+          "category": "Skincare",
+          "features": "Cleanses skin without stripping moisture.",
+          "usage_instructions": "Massage onto wet face and rinse thoroughly.",
+          "ingredients": ["Green Tea Extract", "Glycerin"],
+          "price_bdt": 550,
+          "suitability": "Suitable for sensitive skin."
+        },
+        {
+          "id": "LB04",
+          "name": "Ultra Matte Sunscreen SPF 50",
+          "category": "Skincare",
+          "features": "Provides broad-spectrum sun protection with matte finish.",
+          "usage_instructions": "Apply generously 15 minutes before sun exposure.",
+          "ingredients": ["Zinc Oxide", "Titanium Dioxide"],
+          "price_bdt": 980,
+          "suitability": "Suitable for oily and combination skin."
+        }
+      ]
+    },
+    {
+      "brand_name": "GlowCharm",
+      "products": [
+        {
+          "id": "GC01",
+          "name": "Silk Finish Foundation",
+          "category": "Makeup",
+          "features": "Provides smooth coverage with natural finish.",
+          "usage_instructions": "Apply evenly using brush or sponge.",
+          "ingredients": ["Silicone Blend", "Vitamin E"],
+          "price_bdt": 1450,
+          "suitability": "Suitable for normal to oily skin."
+        },
+        {
+          "id": "GC02",
+          "name": "Radiant Blush Palette",
+          "category": "Makeup",
+          "features": "Adds natural flush with long-lasting color.",
+          "usage_instructions": "Apply lightly to cheeks.",
+          "ingredients": ["Mica", "Iron Oxides"],
+          "price_bdt": 950,
+          "suitability": "Suitable for all skin tones."
+        },
+        {
+          "id": "GC03",
+          "name": "Liquid Eyeliner Pro",
+          "category": "Makeup",
+          "features": "Smudge-proof and long-lasting formula.",
+          "usage_instructions": "Apply along lash line.",
+          "ingredients": ["Carbon Black", "Acrylic Polymer"],
+          "price_bdt": 620,
+          "suitability": "Suitable for sensitive eyes."
+        },
+        {
+          "id": "GC04",
+          "name": "Volume Boost Mascara",
+          "category": "Makeup",
+          "features": "Enhances lash volume and length.",
+          "usage_instructions": "Apply from root to tip of lashes.",
+          "ingredients": ["Beeswax", "Panthenol"],
+          "price_bdt": 780,
+          "suitability": "Suitable for all users."
+        }
+      ]
+    },
+    {
+      "brand_name": "PureSkin",
+      "products": [
+        {
+          "id": "PS01",
+          "name": "Tea Tree Acne Gel",
+          "category": "Skincare",
+          "features": "Helps reduce acne and inflammation.",
+          "usage_instructions": "Apply directly to affected area.",
+          "ingredients": ["Tea Tree Oil", "Salicylic Acid"],
+          "price_bdt": 690,
+          "suitability": "Suitable for acne-prone skin."
+        },
+        {
+          "id": "PS02",
+          "name": "Oil Control Moisturizer",
+          "category": "Skincare",
+          "features": "Controls excess oil and hydrates skin.",
+          "usage_instructions": "Apply once daily after cleansing.",
+          "ingredients": ["Niacinamide", "Aloe Vera"],
+          "price_bdt": 820,
+          "suitability": "Suitable for oily skin."
+        },
+        {
+          "id": "PS03",
+          "name": "Charcoal Detox Mask",
+          "category": "Skincare",
+          "features": "Draws out impurities and unclogs pores.",
+          "usage_instructions": "Apply weekly and rinse after 10 minutes.",
+          "ingredients": ["Activated Charcoal", "Clay"],
+          "price_bdt": 890,
+          "suitability": "Suitable for combination skin."
+        },
+        {
+          "id": "PS04",
+          "name": "Soothing Toner",
+          "category": "Skincare",
+          "features": "Refreshes and balances skin pH.",
+          "usage_instructions": "Apply using cotton pad after cleansing.",
+          "ingredients": ["Rose Water", "Witch Hazel"],
+          "price_bdt": 540,
+          "suitability": "Suitable for sensitive skin."
+        }
+      ]
+    },
+    {
+      "brand_name": "VelvetTouch",
+      "products": [
+        {
+          "id": "VT01",
+          "name": "Creamy Lipstick Rose",
+          "category": "Makeup",
+          "features": "Rich color with moisturizing finish.",
+          "usage_instructions": "Apply directly to lips.",
+          "ingredients": ["Shea Butter", "Vitamin E"],
+          "price_bdt": 680,
+          "suitability": "Suitable for all skin tones."
+        },
+        {
+          "id": "VT02",
+          "name": "Lip Balm Repair",
+          "category": "Personal Care",
+          "features": "Repairs dry and chapped lips.",
+          "usage_instructions": "Apply as needed throughout the day.",
+          "ingredients": ["Beeswax", "Coconut Oil"],
+          "price_bdt": 320,
+          "suitability": "Suitable for all users."
+        },
+        {
+          "id": "VT03",
+          "name": "Nourishing Hand Cream",
+          "category": "Personal Care",
+          "features": "Softens and protects hands.",
+          "usage_instructions": "Massage onto hands as needed.",
+          "ingredients": ["Glycerin", "Almond Oil"],
+          "price_bdt": 450,
+          "suitability": "Suitable for dry skin."
+        },
+        {
+          "id": "VT04",
+          "name": "Body Lotion Smooth Care",
+          "category": "Personal Care",
+          "features": "Keeps skin smooth and hydrated.",
+          "usage_instructions": "Apply daily after shower.",
+          "ingredients": ["Cocoa Butter", "Vitamin E"],
+          "price_bdt": 720,
+          "suitability": "Suitable for normal to dry skin."
+        }
+      ]
+    },
+    {
+      "brand_name": "AuraGlow",
+      "products": [
+        {
+          "id": "AG01",
+          "name": "Herbal Face Pack",
+          "category": "Skincare",
+          "features": "Revitalizes skin with natural herbs.",
+          "usage_instructions": "Apply evenly and wash off after 15 minutes.",
+          "ingredients": ["Neem", "Turmeric"],
+          "price_bdt": 600,
+          "suitability": "Suitable for all skin types."
+        },
+        {
+          "id": "AG02",
+          "name": "Under Eye Repair Cream",
+          "category": "Skincare",
+          "features": "Reduces dark circles and puffiness.",
+          "usage_instructions": "Apply gently under eyes at night.",
+          "ingredients": ["Caffeine", "Peptides"],
+          "price_bdt": 980,
+          "suitability": "Suitable for all skin types."
+        },
+        {
+          "id": "AG03",
+          "name": "Refreshing Face Mist",
+          "category": "Skincare",
+          "features": "Instant hydration and refreshment.",
+          "usage_instructions": "Spray on face anytime during the day.",
+          "ingredients": ["Rose Water", "Glycerin"],
+          "price_bdt": 520,
+          "suitability": "Suitable for all users."
+        },
+        {
+          "id": "AG04",
+          "name": "Night Repair Serum",
+          "category": "Skincare",
+          "features": "Supports skin repair overnight.",
+          "usage_instructions": "Apply before bedtime on clean skin.",
+          "ingredients": ["Retinol", "Hyaluronic Acid"],
+          "price_bdt": 1350,
+          "suitability": "Suitable for experienced skincare users."
+        }
+      ]
+    }
+  ]
+}

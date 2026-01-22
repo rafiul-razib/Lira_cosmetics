@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lira Cosmetics Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+  <div class="chat-app">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="bot-avatar">💄</div>
+      <div>
+        <h3>Lira Cosmetics</h3>
+        <span class="status">Online</span>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="chat-box" class="chat-messages"></div>
+
+    <!-- Input -->
+    <div class="chat-input">
+      <input
+        id="user-input"
+        class="chat-input-field"
+        type="text"
+        placeholder="Ask about products, skincare, offers..."
+        onkeydown="if(event.key==='Enter') sendMessage()"
+      />
+      <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
