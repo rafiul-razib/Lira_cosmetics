@@ -143,7 +143,7 @@ body {
 }
 
 .chat-input button {
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .chat-input button:active {
