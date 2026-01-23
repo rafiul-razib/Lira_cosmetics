@@ -80,9 +80,14 @@ Suitability: {p.get('suitability', 'N/A')}
 # --------------------------------------------------
 # Routes
 # --------------------------------------------------
+# @app.route("/")
+# def home():
+#     return render_template("index.html")
+
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return "HTML route working 🚀"
+
 
 
 @app.route("/chat", methods=["POST"])
