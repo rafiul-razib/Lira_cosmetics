@@ -40,5 +40,49 @@
   </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+  const micBtn = document.getElementById("micBtn");
+  const userInput = document.getElementById("user-input");
+
+  // Check browser support
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    micBtn.disabled = true;
+    micBtn.innerText = "🎤 Not supported";
+  } else {
+    const recognition = new SpeechRecognition();
+    // recognition.lang = "en-US"; // change to "bn-BD" for Bangla
+    recognition.lang = navigator.language || "en-US"; // auto-detect browser language
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    micBtn.onclick = () => {
+      recognition.start();
+      micBtn.classList.add("pulsing"); // start pulsing
+      micBtn.innerText = "🎙...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      userInput.value = transcript;
+      micBtn.innerText = "🎤";
+      micBtn.classList.remove("pulsing");
+      sendMessage(); // auto-send after speaking
+    };
+
+    recognition.onerror = () => {
+      micBtn.innerText = "🎤 Speak";
+      micBtn.classList.remove("pulsing");
+      alert("Voice recognition failed. Try again.");
+    };
+
+    recognition.onend = () => {
+  micBtn.classList.remove("pulsing");
+};
+  }
+</script>
+
 </body>
 </html>
