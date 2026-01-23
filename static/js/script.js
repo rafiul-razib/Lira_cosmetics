@@ -77,14 +77,18 @@ function speakBot(text) {
     const voices = window.speechSynthesis.getVoices();
 
     // Select a female voice (example: Google UK English Female)
-    const femaleVoice = voices.find(v => v.name.includes("Female")) || voices[0];
-    utterance.voice = femaleVoice;
+    const bestVoice = voices.find(v => v.name.includes("Natural") && v.lang.startsWith("en")) || 
+                  voices.find(v => v.name.includes("Google") && v.lang.startsWith("en")) ||
+                  voices.find(v => v.name.includes("Female") && v.lang.startsWith("en")) ||
+      voices[0];
+    
+    utterance.voice = bestVoice;
 
     // Set friendly speech parameters
-    utterance.lang = femaleVoice.lang || "en-US";
-    utterance.rate = 1;    // Normal speed
-    utterance.pitch = 1.2; // Slightly higher pitch for friendly tone
-    utterance.volume = 1;  // Max volume
+    utterance.lang = bestVoice.lang || "en-US";
+    utterance.rate = 0.8;    // Normal speed
+    utterance.pitch = 1.3; // Slightly higher pitch for friendly tone
+    utterance.volume = 0.9;  // Max volume
 
     window.speechSynthesis.speak(utterance);
   }
