@@ -22,16 +22,21 @@
     <div id="chat-box" class="chat-messages"></div>
 
     <!-- Input -->
-    <div class="chat-input">
-      <input
-        id="user-input"
-        class="chat-input-field"
-        type="text"
-        placeholder="Ask about products, skincare, offers..."
-        onkeydown="if(event.key==='Enter') sendMessage()"
-      />
-      <button class="chat-send-btn" onclick="sendMessage()">➤</button>
-    </div>
+  <div class="chat-input">
+  <input
+    id="user-input"
+    class="chat-input-field"
+    type="text"
+    placeholder="Ask about products, skincare, offers..."
+    autocomplete="off"
+    onkeydown="if(event.key==='Enter') sendMessage()"
+  />
+  <div class="flex">
+    <button id="micBtn" title="Voice input">🎙️</button>
+    <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
   </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
