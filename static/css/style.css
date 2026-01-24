@@ -234,8 +234,8 @@ body {
 /* Small screens: phones */
 @media (max-width: 767px) {
   .chat-app {
-    width: 95%;
-    height: 90vh;
+    width: 85%;
+    height: 80vh;
     margin: 10px auto;
     border-radius: 15px;
   }
