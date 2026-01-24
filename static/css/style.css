@@ -225,14 +225,74 @@ body {
   border-radius: 10px;
 }
 
+
+
 /* =====================================================
-   DESKTOP
+   MOBILE RESPONSIVENESS
 ===================================================== */
-@media (min-width: 768px) {
+
+/* Small screens: phones */
+@media (max-width: 767px) {
   .chat-app {
+    width: 95%;
+    height: 90vh;
+    margin: 10px auto;
+    border-radius: 15px;
+  }
+
+  .chat-header {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .chat-header h3 {
+    font-size: 16px;
+  }
+
+  .chat-messages {
+    padding: 12px;
+  }
+
+  .message {
+    max-width: 85%;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .chat-input {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .chat-input-field {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  #micBtn,
+  .chat-send-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .chat-app {
+    width: 400px;
     height: 80vh;
   }
 }
+
+/* Desktops (1024px and above) */
+@media (min-width: 1024px) {
+  .chat-app {
+    width: 420px;
+    height: 75vh;
+  }
+}
+
 
 /* =====================================================
    Speech Animation

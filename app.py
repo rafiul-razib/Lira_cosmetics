@@ -94,7 +94,7 @@ def home():
 def chat():
     data = request.get_json(silent=True) or {}
     user_message = data.get("message", "").strip()
-    temperature = float(data.get("temperature", 0.4))  # Get temperature from frontend if provided
+    temperature = float(data.get("temperature", 0.6))  # Get temperature from frontend if provided
 
     if not user_message:
         return jsonify({"reply": "Please ask a question! 😊"})
@@ -114,40 +114,34 @@ Company Info:
 
 Products:
 {products_context}
+"""
+    system_instruction = session["system_instruction"]
+
+    # Prepend rules + user question
+    prompt = f"""{system_instruction}
 
 Rules:
 - Answer ONLY based on this data.
+- Answer in 2-3 sentences only.
+- Avoid any */** signs in the reply.
 - Be clear, polite, and customer-friendly.
 - Do NOT invent information.
-"""
 
-    system_instruction = session["system_instruction"]
+Question:
+{user_message}"""
 
     try:
         # Start the chat with history
         chat_obj = model.start_chat(history=session["chat_history"])
 
-        # Send system instruction once per session
-        if not session.get("system_sent", False):
-            chat_obj.send_message(
-                system_instruction,
-                generation_config={
-                    "temperature": temperature,
-                    "top_p": 0.9,
-                    "top_k": 40,
-                    "max_output_tokens": 512
-                }
-            )
-            session["system_sent"] = True
-
-        # Send the actual user question
+        # Send the user question with rules embedded
         response = chat_obj.send_message(
-            user_message,
+            prompt,
             generation_config={
                 "temperature": temperature,
                 "top_p": 0.9,
                 "top_k": 40,
-                "max_output_tokens": 512
+                "max_output_tokens": 256
             }
         )
 

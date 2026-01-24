@@ -9,6 +9,7 @@
 
 <body>
   <div class="chat-app">
+
     <!-- Header -->
     <div class="chat-header">
       <div class="bot-avatar">💄</div>
@@ -22,67 +23,42 @@
     <div id="chat-box" class="chat-messages"></div>
 
     <!-- Input -->
-  <div class="chat-input">
-  <input
-    id="user-input"
-    class="chat-input-field"
-    type="text"
-    placeholder="Ask about products, skincare, offers..."
-    autocomplete="off"
-    onkeydown="if(event.key==='Enter') sendMessage()"
-  />
-  <div class="flex">
-    <button id="micBtn" title="Voice input">🎙️</button>
-    <button class="chat-send-btn" onclick="sendMessage()">➤</button>
-  </div>
-</div>
+    <div class="chat-input">
+      <input
+        id="user-input"
+        class="chat-input-field"
+        type="text"
+        placeholder="Speak or type about products, skincare, offers..."
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') sendMessage()"
+      />
+
+      <div class="chat-actions flex">
+        <!-- Mic starts & stops conversation -->
+        <button
+          id="micBtn"
+          class="mic-btn"
+          title="Start / Stop Voice Chat"
+          type="button"
+        >
+          🎙️
+        </button>
+
+        <!-- Manual send (optional) -->
+        <button
+          class="chat-send-btn"
+          type="button"
+          onclick="sendMessage()"
+        >
+          ➤
+        </button>
+      </div>
+    </div>
 
   </div>
 
+  <!-- Main JS (contains speech + bot logic) -->
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  <script>
-  const micBtn = document.getElementById("micBtn");
-  const userInput = document.getElementById("user-input");
-
-  // Check browser support
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    micBtn.disabled = true;
-    micBtn.innerText = "🎤 Not supported";
-  } else {
-    const recognition = new SpeechRecognition();
-    // recognition.lang = "en-US"; // change to "bn-BD" for Bangla
-    recognition.lang = navigator.language || "en-US"; // auto-detect browser language
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    micBtn.onclick = () => {
-      recognition.start();
-      micBtn.classList.add("pulsing"); // start pulsing
-      micBtn.innerText = "🎙...";
-    };
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      userInput.value = transcript;
-      micBtn.innerText = "🎤";
-      micBtn.classList.remove("pulsing");
-      sendMessage(); // auto-send after speaking
-    };
-
-    recognition.onerror = () => {
-      micBtn.innerText = "🎤 Speak";
-      micBtn.classList.remove("pulsing");
-      alert("Voice recognition failed. Try again.");
-    };
-
-    recognition.onend = () => {
-  micBtn.classList.remove("pulsing");
-};
-  }
-</script>
 
 </body>
 </html>
