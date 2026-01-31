@@ -495,7 +495,7 @@ body {
   }
 
   .chat-app {
-    height: calc(100vh - 20px);
+    height: calc(100vh - 150px);
     border-radius: 20px;
   }
 
