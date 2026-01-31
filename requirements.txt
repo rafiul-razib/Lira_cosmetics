@@ -48,6 +48,8 @@ urllib3==2.6.3
 uvicorn==0.40.0
 Werkzeug==3.1.5
 Flask-Session==0.8.0
+openai==1.60.0
+
 
 
 
