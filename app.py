@@ -4,9 +4,8 @@ from dotenv import load_dotenv
 import json
 import os
 import re
-from openai import OpenAI
+import requests
 from pathlib import Path
-import uuid
 
 # --------------------------------------------------
 # Setup
@@ -16,7 +15,6 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret")
 
-# 🔥 SERVER-SIDE SESSION CONFIG
 app.config.update(
     SESSION_TYPE="filesystem",
     SESSION_PERMANENT=False,
@@ -27,7 +25,75 @@ app.config.update(
 
 Session(app)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# --------------------------------------------------
+# Hugging Face Setup
+# --------------------------------------------------
+
+
+HF_API_URL = "https://api-inference.huggingface.co/rafi25003/lira-cosmetics-qwen-1.5b"
+HF_HEADERS = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"}
+MAX_PROMPT_CHARS = 3000  # Prevent payload overflow on HF free tier
+
+
+def query_huggingface(prompt):
+    # Trim prompt if too large
+    if len(prompt) > MAX_PROMPT_CHARS:
+        prompt = prompt[-MAX_PROMPT_CHARS:]
+        print(f"⚠️ Prompt trimmed to {MAX_PROMPT_CHARS} chars")
+
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "max_new_tokens": 200,
+            "temperature": 0.7,
+            "return_full_text": False,  # Only return newly generated tokens
+            "do_sample": True,
+        }
+    }
+
+    try:
+        response = requests.post(
+            HF_API_URL,
+            headers=HF_HEADERS,
+            json=payload,
+            timeout=60  # Allow time for cold-start
+        )
+
+        print(f"HF Status: {response.status_code}")
+        print(f"HF Body preview: {response.text[:300]!r}")
+
+        # Model still loading
+        if response.status_code == 503:
+            return [{"generated_text": "Model is loading, please wait a moment and try again."}]
+
+        # Any other HTTP error
+        if not response.ok:
+            print(f"❌ HF HTTP error: {response.status_code} - {response.text}")
+            return [{"generated_text": "Error connecting to AI model."}]
+
+        # Empty body guard
+        if not response.text.strip():
+            print("❌ HF returned empty body")
+            return [{"generated_text": "Error connecting to AI model."}]
+
+        result = response.json()
+
+        # HF model-level error (e.g. token limit, bad input)
+        if isinstance(result, dict) and "error" in result:
+            print(f"❌ HF model error: {result['error']}")
+            if "loading" in result["error"].lower():
+                return [{"generated_text": "Model is loading, please try again in a moment."}]
+            return [{"generated_text": "Error connecting to AI model."}]
+
+        return result
+
+    except requests.exceptions.Timeout:
+        print("❌ HF request timed out")
+        return [{"generated_text": "The AI model took too long to respond. Please try again."}]
+    except Exception as e:
+        print(f"❌ HF request error: {e}")
+        return [{"generated_text": "Error connecting to AI model."}]
+
 
 # --------------------------------------------------
 # Paths
@@ -57,35 +123,64 @@ except Exception as e:
     ARTICLE_TEXT = ""
 
 # --------------------------------------------------
+# Build system instruction once at startup (not per session)
+# --------------------------------------------------
+SYSTEM_INSTRUCTION = f"""You are a professional customer service officer for Lira Cosmetics Ltd.
+
+Company Info:
+{ARTICLE_TEXT}
+
+Products:
+{chr(10).join(
+    f"Product Name: {p.get('name')} | Brand: {p.get('brand_name', 'Unknown')} | "
+    f"Category: {p.get('category')} | Price: {p.get('price_bdt')} BDT | "
+    f"Suitability: {p.get('suitability')}"
+    for brand in PRODUCT_DATA.get("brands", [])
+    for p in brand.get("products", [])
+)}
+
+Rules:
+- Answer ONLY using the company and product data above.
+- Keep replies short (2-3 sentences).
+- No emojis, no bullet points.
+- If asked in Bangla, reply in polite natural Bangla. Otherwise reply in polite natural English.
+"""
+
+
+# --------------------------------------------------
 # Utilities
 # --------------------------------------------------
 def detect_language(text):
     return "bn" if re.search(r"[\u0980-\u09FF]", text) else "en"
 
 
-def get_all_products():
-    products = []
-    for brand in PRODUCT_DATA.get("brands", []):
-        for product in brand.get("products", []):
-            p = product.copy()
-            p["brand"] = brand.get("brand_name", "Unknown Brand")
-            products.append(p)
-    return products
+def build_prompt(chat_history, user_message):
+    """Convert message list into a plain-text prompt for HF text-gen models."""
+    prompt = SYSTEM_INSTRUCTION + "\n"
+
+    for msg in chat_history:
+        if msg["role"] == "user":
+            prompt += f"User: {msg['content']}\n"
+        elif msg["role"] == "assistant":
+            prompt += f"Assistant: {msg['content']}\n"
+
+    prompt += f"User: {user_message}\nAssistant:"
+    return prompt
 
 
-def format_products_for_prompt(products):
-    return "\n".join(
-        f"""Product Name: {p.get('name')}
-Brand: {p.get('brand')}
-Category: {p.get('category')}
-Features: {p.get('features')}
-Usage: {p.get('usage_instructions')}
-Ingredients: {', '.join(p.get('ingredients', []))}
-Price: {p.get('price_bdt')} BDT
-Suitability: {p.get('suitability')}
----"""
-        for p in products
-    )
+def extract_reply(output):
+    """Safely extract the assistant reply from HF output."""
+    try:
+        text = output[0].get("generated_text", "").strip()
+        if not text:
+            return None
+        # If model echoed the prompt back (return_full_text=True fallback), split it
+        if "Assistant:" in text:
+            text = text.split("Assistant:")[-1].strip()
+        return text or None
+    except (IndexError, KeyError, TypeError):
+        return None
+
 
 # --------------------------------------------------
 # Routes
@@ -108,56 +203,32 @@ def chat():
     if "chat_history" not in session:
         session["chat_history"] = []
 
-    if "system_instruction" not in session:
-        session["system_instruction"] = f"""
-You are a professional customer service officer for Lira Cosmetics Ltd.
-
-Company Info:
-{ARTICLE_TEXT}
-
-Products:
-{format_products_for_prompt(get_all_products())}
-"""
-
-    system_rules = (
-        "Reply in polite, natural Bangla."
-        if lang == "bn"
-        else "Reply in polite, natural English."
-    )
-
-    messages = [
-        {"role": "system", "content": session["system_instruction"]},
-        {
-            "role": "system",
-            "content": f"""{system_rules}
-Rules:
-- Answer ONLY from company data
-- Keep replies short (2–3 sentences)
-- No emojis, no bullets
-"""
-        },
-        *session["chat_history"],
-        {"role": "user", "content": user_message},
-    ]
-
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            max_tokens=200
-        )
+        prompt = build_prompt(session["chat_history"], user_message)
+        output = query_huggingface(prompt)
 
-        reply = response.choices[0].message.content.strip()
+        print("HF RAW OUTPUT:", output)
 
-        # Keep last 3 turns
+        reply = extract_reply(output)
+
+        if not reply:
+            reply = (
+                "দুঃখিত, এই মুহূর্তে উত্তর দিতে পারছি না।"
+                if lang == "bn"
+                else "Sorry, I couldn't generate a proper response."
+            )
+
+        # Keep only last 6 messages (3 turns) to limit session size
         session["chat_history"] = (
-            session["chat_history"] +
-            [{"role": "user", "content": user_message},
-             {"role": "assistant", "content": reply}]
+            session["chat_history"] + [
+                {"role": "user", "content": user_message},
+                {"role": "assistant", "content": reply}
+            ]
         )[-6:]
+        session.modified = True
 
     except Exception as e:
-        print("❌ OpenAI error:", e)
+        print(f"❌ Chat error: {e}")
         reply = (
             "এই মুহূর্তে উত্তর দিতে সমস্যা হচ্ছে।"
             if lang == "bn"
@@ -167,37 +238,22 @@ Rules:
     return jsonify({"reply": reply, "lang": lang})
 
 
+@app.route("/reset", methods=["POST"])
+def reset():
+    """Clear chat history for the current session."""
+    session.pop("chat_history", None)
+    return jsonify({"status": "ok", "message": "Chat history cleared."})
+
 
 # --------------------------------------------------
-# TTS
+# TTS (disabled)
 # --------------------------------------------------
 TTS_DIR = Path("static/tts")
 TTS_DIR.mkdir(parents=True, exist_ok=True)
 
 @app.route("/tts", methods=["POST"])
 def tts():
-    data = request.get_json(silent=True) or {}
-    text = data.get("text", "").strip()
-
-    if not text:
-        return jsonify({"error": "No text"}), 400
-
-    try:
-        voice = "verse" if detect_language(text) == "bn" else "alloy"
-        audio_path = TTS_DIR / f"{uuid.uuid4().hex}.mp3"
-
-        with client.audio.speech.with_streaming_response.create(
-            model="gpt-4o-mini-tts",
-            voice=voice,
-            input=text,
-            speed = 1.3) as response:
-            response.stream_to_file(audio_path)
-
-        return jsonify({"audio_url": f"/static/tts/{audio_path.name}"})
-
-    except Exception as e:
-        print("❌ TTS error:", e)
-        return jsonify({"error": "TTS failed"}), 500
+    return jsonify({"error": "TTS disabled for now"}), 500
 
 
 # --------------------------------------------------
